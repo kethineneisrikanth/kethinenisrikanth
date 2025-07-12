@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fashion Store - E-Commerce</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: #333;
+    }
+    header {
+      background-color: #0d47a1;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background: #1565c0;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .filter, .search-box {
+      text-align: center;
+      padding: 10px;
+    }
+    .filter button {
+      margin: 5px;
+      padding: 8px 15px;
+      background-color: #fff;
+      border: 2px solid #0d47a1;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #0d47a1;
+    }
+    .filter button:hover {
+      background-color: #0d47a1;
+      color: #fff;
+    }
+    .search-box input {
+      padding: 8px;
+      width: 80%;
+      max-width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+    .product {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      width: 230px;
+      margin: 15px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .product:hover {
+      transform: scale(1.05);
+    }
+    .product img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .product button {
+      margin-top: 10px;
+      background-color: #1565c0;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .product button:hover {
+      background-color: #0d47a1;
+    }
+    .cart {
+      padding: 20px;
+      background: #e3f2fd;
+      border-top: 2px solid #ccc;
+    }
+    .checkout {
+      background: #43a047;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .checkout:hover {
+      background: #2e7d32;
+    }
+    #cart li {
+      padding: 5px 0;
+    }
+    .remove-btn {
+      margin-left: 10px;
+      color: red;
+      cursor: pointer;
+    }
+    @media screen and (max-width: 600px) {
+      .products {
+        flex-direction: column;
+        align-items: center;
+      }
+      .product {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Fashion Wear - Online Clothing Store</h1>
+</header>
+
+<nav>
+  <a href="#">Home</a>
+  <a href="#">Men</a>
+  <a href="#">Women</a>
+  <a href="#">Kids</a>
+  <a href="#">Towels</a>
+</nav>
+
+<div class="filter">
+  <button onclick="filterProducts('All')">All</button>
+  <button onclick="filterProducts('Men')">Men</button>
+  <button onclick="filterProducts('Women')">Women</button>
+  <button onclick="filterProducts('Kids')">Kids</button>
+  <button onclick="filterProducts('Towels')">Towels</button>
+</div>
+
+<div class="search-box">
+  <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Search for clothes...">
+</div>
+
+<section class="products" id="product-list"></section>
+
+<section class="cart">
+  <h2>Your Cart</h2>
+  <ul id="cart"></ul>
+  <p id="total">Total: ₹0</p>
+  <button class="checkout" onclick="checkout()">Checkout</button>
+</section>
+
+<script>
+  const products = [
+    { name: "Men's Shirt", price: 699, category: "Men", img: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcRilo7gN2PFP91oEqQi-6Pp6L6qsrsxzqGmqPJOIbgpa1ohpqdPZy7EPsg_XGWrRsfoU650nzB4I96AI_8yh0BNW-SH4vJ_0MCnnzN41VPVrbdh9S46fOgTzQ" },
+    { name: "Men's Jeans", price: 899, category: "Men", img: "https://m.media-amazon.com/images/I/51wvhS5hq9L._SY741_.jpg" },
+    { name: "Women's Dress", price: 999, category: "Women", img: "https://www.fablestreet.com/_next/image?url=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F0486%2F0634%2F7416%2Fproducts%2FPeter_20Pan_20Collar_20Pleated_20A_20Line_20Dress_20-_20Green_L2.jpg%3Fv%3D1615471285&w=1920&q=75" },
+    { name: "Women's Sarees", price: 1999, category: "Women", img: "https://lajreedesigner.com/cdn/shop/products/ShrijiAvadh-Bramastra-FiroziBlue_1_900x1350_crop_center@2x.jpg?v=1745498936" },
+    { name: "Kids Shorts", price: 399, category: "Kids", img: "https://image.hm.com/assets/hm/c4/0f/c40f90c728d3088f26c2bf5fc6fdc57e0789670b.jpg?imwidth=1260" },
+    { name: "Kids T-shirts", price: 599, category: "Kids", img: "https://img.tatacliq.com/images/i11/437Wx649H/MP000000017648424_437Wx649H_202305270437081.jpeg" },
+    { name: "Towels", price: 499, category: "Towels", img: "https://ramrajcotton.in/cdn/shop/files/4_3f73c275-d60a-47f2-9aa8-9dc518d80a93.jpg?v=1751887492&width=800" },
+  ];
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let currentCategory = "All";
+
+  function displayProducts(category = "All") {
+    currentCategory = category;
+    const container = document.getElementById("product-list");
+    container.innerHTML = '';
+
+    let filtered = category === "All" ? products : products.filter(p => p.category === category);
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    if (searchValue) {
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(searchValue));
+    }
+
+    filtered.forEach(product => {
+      const index = products.indexOf(product);
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <img src="${product.img}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p>Price: ₹${product.price}</p>
+        <button onclick="addToCart(${index})">Add to Cart</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function filterProducts(category) {
+    displayProducts(category);
+  }
+
+  function searchProducts() {
+    displayProducts(currentCategory);
+  }
+
+  function addToCart(index) {
+    const item = products[index];
+    const existing = cart.find(p => p.name === item.name);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ ...item, qty: 1 });
+    }
+    updateCart();
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  function removeFromCart(name) {
+    cart = cart.filter(item => item.name !== name);
+    updateCart();
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  function updateCart() {
+    const cartList = document.getElementById("cart");
+    const totalEl = document.getElementById("total");
+    cartList.innerHTML = '';
+    let total = 0;
+
+    cart.forEach(item => {
+      const li = document.createElement("li");
+      li.innerHTML = `${item.name} - ₹${item.price} x ${item.qty} = ₹${item.price * item.qty} <span class='remove-btn' onclick="removeFromCart('${item.name}')">&times;</span>`;
+      cartList.appendChild(li);
+      total += item.price * item.qty;
+    });
+
+    totalEl.textContent = `Total: ₹${total}`;
+  }
+
+  function checkout() {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+    } else {
+      let invoice = "🧾 Invoice\n---------------------\n";
+      cart.forEach(item => {
+        invoice += `${item.name} - ₹${item.price} x ${item.qty} = ₹${item.price * item.qty}\n`;
+      });
+      const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+      invoice += "---------------------\nTotal: ₹" + total;
+      alert(invoice);
+
+      cart = [];
+      updateCart();
+      localStorage.removeItem('cart');
+    }
+  }
+
+  // Initial rendering
+  displayProducts();
+  updateCart();
+</script>
+
+</body>
+</html>
